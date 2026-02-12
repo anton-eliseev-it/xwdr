@@ -1,0 +1,101 @@
+{
+  "log": {
+    "loglevel": "warning"
+  },
+  "routing": {
+    "domainStrategy": "IPIfNonMatch",
+    "rules": [
+      {
+        "type": "field",
+        "ip": [
+          "geoip:private"
+        ],
+        "outboundTag": "block"
+      }
+    ]
+  },
+  "inbounds": [
+    {
+      "listen": "0.0.0.0",
+      "port": 443,
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          // Клиент 1 — например, твой основной телефон
+          {
+            "id": "65183eac-c09f-4fe7-8f0f-95f55281cbb4",  // ← СГЕНЕРИРУЙ НОВЫЙ: xray uuid
+            "flow": "xtls-rprx-vision",
+            "email": "phone-main"   // опционально — для удобства в логах
+          },
+          // Клиент 2 — например, ноутбук
+          {
+            "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",  // ← СГЕНЕРИРУЙ НОВЫЙ
+            "flow": "xtls-rprx-vision",
+            "email": "laptop-home"
+          },
+          // Клиент 3 — например, планшет жены/ребёнка
+          {
+            "id": "11111111-2222-3333-4444-555555555555",  // ← СГЕНЕРИРУЙ НОВЫЙ
+            "flow": "xtls-rprx-vision",
+            "email": "tablet-family"
+          },
+          // Клиент 4 — запасной / друг / ещё одно устройство
+          {
+            "id": "99999999-aaaa-bbbb-cccc-dddddddddddd",  // ← СГЕНЕРИРУЙ НОВЫЙ
+            "flow": "xtls-rprx-vision",
+            "email": "spare-friend"
+          }
+          // Добавляй новые клиенты сюда по аналогии
+        ],
+        "decryption": "none"
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "dest": "www.microsoft.com:443",          // Можно сменить на www.apple.com:443, www.bing.com:443 и т.д.
+          "xver": 0,
+          "serverNames": [
+            "www.microsoft.com",
+            "microsoft.com"                         // Добавил оба варианта — иногда клиенты отправляют без www
+          ],
+          "privateKey": "iOEARLzm7u7VJoygXXK8b1Nt6eQsoyYgFP8_3cOLtXE",  // ← ВСТАВЬ СВОЙ PRIVATE KEY (из xray x25519)
+          "publicKey": "8fK2zL9v5Z5fK2zL9v5Z5fK2zL9v5Z5fK2zL9v5Z",      // ← Это только для справки, в конфиге не нужно
+          "minClientVer": "",
+          "maxClientVer": "",
+          "maxTimeDiff": 0,
+          "shortIds": [
+            "01",      // shortId 1 — например, для твоего телефона
+            "ab",      // shortId 2 — для ноутбука
+            "ffee",    // shortId 3 — для планшета
+            "1234",    // shortId 4 — запасной
+            ""         // пустой shortId — разрешает подключаться без указания sid (на всякий случай)
+          ]
+        }
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls",
+          "quic"
+        ]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "streamSettings": {
+        "sockopt": {
+          "interface": "wg0"
+        }
+      }
+    },
+    {
+      "protocol": "blackhole",
+      "tag": "block"
+    }
+  ]
+}
