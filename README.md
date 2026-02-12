@@ -12,6 +12,9 @@ sysctl -p
 cd /etc/wireguard
 ```
 ```
+wg genkey | tee privatekey | wg pubkey > publickey
+```
+```
 systemctl start wg-quick@wg0
 ```
 ```
